@@ -30,7 +30,7 @@ const Hero = () => {
 
   return (
     <section className="flex flex-col md:flex-row h-[550px] w-full overflow-hidden px-8 md:px-16">
-      {/* Left side - Flash Sale (now on the left) */}
+      {/* Left side - Flash Sale */}
       <div className="w-full md:w-1/2 bg-primary-blue flex items-center justify-center">
         <div className="text-center px-8 py-12 max-w-md">
           <div className="inline-block bg-white text-primary-blue font-bold px-4 py-1 rounded-full mb-4 animate-pulse">
