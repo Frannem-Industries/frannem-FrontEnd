@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const location = useLocation();
 
   // Handle scroll effect
@@ -27,6 +28,25 @@ const Header = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  // Toggle account dropdown
+  const toggleAccountDropdown = () => {
+    setIsAccountDropdownOpen(!isAccountDropdownOpen);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isAccountDropdownOpen && !event.target.closest('.account-dropdown-container')) {
+        setIsAccountDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isAccountDropdownOpen]);
 
   return (
     <header
@@ -111,39 +131,46 @@ const Header = () => {
 
         {/* Account and Cart */}
         <div className='flex items-center gap-4 md:gap-8 order-2 md:order-3'>
-          <div className='flex items-center gap-2 cursor-pointer group relative'>
-            <Icon
-              className='text-2xl md:text-3xl'
-              icon={"codicon:account"}
-            />
-            <p className='hidden sm:block'>Account</p>
-            <Icon
-              className='hidden sm:block transition-transform group-hover:rotate-180'
-              icon={"iconamoon:arrow-down-2"}
-            />
-            {/* Dropdown menu for account */}
-            <div className='absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md hidden group-hover:block z-10'>
-              <div className='py-2 px-4 hover:bg-gray-100'>
-                <Link to='/login' className='block'>
-                  Login
-                </Link>
-              </div>
-              <div className='py-2 px-4 hover:bg-gray-100'>
-                <Link to='/register' className='block'>
-                  Register
-                </Link>
-              </div>
-              <div className='py-2 px-4 hover:bg-gray-100'>
-                <Link to='/profile' className='block'>
-                  My Profile
-                </Link>
-              </div>
-              <div className='py-2 px-4 hover:bg-gray-100'>
-                <Link to='/orders' className='block'>
-                  My Orders
-                </Link>
-              </div>
+          <div className='account-dropdown-container flex items-center gap-2 cursor-pointer relative'>
+            <div 
+              className='flex items-center gap-2'
+              onClick={toggleAccountDropdown}
+            >
+              <Icon
+                className='text-2xl md:text-3xl'
+                icon={"codicon:account"}
+              />
+              <p className='hidden sm:block'>Account</p>
+              <Icon
+                className={`hidden sm:block transition-transform ${isAccountDropdownOpen ? 'rotate-180' : ''}`}
+                icon={"iconamoon:arrow-down-2"}
+              />
             </div>
+            {/* Dropdown menu for account */}
+            {isAccountDropdownOpen && (
+              <div className='absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-10'>
+                <div className='py-2 px-4 hover:bg-gray-100'>
+                  <Link to='/login' className='block' onClick={() => setIsAccountDropdownOpen(false)}>
+                    Login
+                  </Link>
+                </div>
+                <div className='py-2 px-4 hover:bg-gray-100'>
+                  <Link to='/register' className='block' onClick={() => setIsAccountDropdownOpen(false)}>
+                    Register
+                  </Link>
+                </div>
+                <div className='py-2 px-4 hover:bg-gray-100'>
+                  <Link to='/profile' className='block' onClick={() => setIsAccountDropdownOpen(false)}>
+                    My Profile
+                  </Link>
+                </div>
+                <div className='py-2 px-4 hover:bg-gray-100'>
+                  <Link to='/orders' className='block' onClick={() => setIsAccountDropdownOpen(false)}>
+                    My Orders
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
           <div className='flex items-center gap-2 cursor-pointer relative'>
             <Icon

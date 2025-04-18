@@ -10,19 +10,19 @@ export const navLinks = [
   },
   {
     name: "About Us",
-    link: "/",
+    link: "/about",
   },
   {
     name: "Products",
-    link: "/",
+    link: "/products",
   },
   {
     name: "Blog",
-    link: "/",
+    link: "/blog",
   },
   {
     name: "Contact Us",
-    link: "/",
+    link: "/contact",
   },
 ]
 export const categories = [
