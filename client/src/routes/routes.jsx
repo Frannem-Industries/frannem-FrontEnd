@@ -6,7 +6,10 @@ import AboutUs from "../screens/AboutUs";
 import Blog from "../screens/Blog";
 import Contact from "../screens/Contact";
 import ProductPage from "../screens/ProductPage";
-
+import Login from "../screens/Login";
+import Register from "../screens/Register";
+import Profile from "../screens/Profile";
+import Orders from "../screens/Orders";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,20 +20,36 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/profil",
+        element: <Profile />,
+      },
+      {
+        path: "/orders",
+        element: <Orders />,
+      },
+      {
         path: "/about",
         element: <AboutUs />,
       },
       {
-        path:"/blog",
-        element: <Blog />
+        path: "/blog",
+        element: <Blog />,
       },
       {
-        path:"/products",
-        element: <ProductPage />
+        path: "/products",
+        element: <ProductPage />,
       },
       {
-        path:"/contact",
-        element: <Contact />
+        path: "/contact",
+        element: <Contact />,
       },
       {
         path: "*",
