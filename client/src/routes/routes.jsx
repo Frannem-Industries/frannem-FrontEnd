@@ -5,11 +5,13 @@ import NotFound from "../screens/NotFound";
 import AboutUs from "../screens/AboutUs";
 import Blog from "../screens/Blog";
 import Contact from "../screens/Contact";
-import ProductPage from "../screens/ProductPage";
+import Product from "../components/products/Product";
+import CategoryDisplay from "../screens/CategoryDisplay";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import Profile from "../screens/Profile";
 import Orders from "../screens/Orders";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,7 +34,7 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/orders",
+        path: "/orde",
         element: <Orders />,
       },
       {
@@ -44,12 +46,16 @@ const router = createBrowserRouter([
         element: <Blog />,
       },
       {
-        path: "/products",
-        element: <ProductPage />,
+        path:"/product/:id",
+        element:<Product />,
       },
       {
         path: "/contact",
         element: <Contact />,
+      },
+      {
+        path:"/category/:id",
+        element: <CategoryDisplay />,
       },
       {
         path: "*",

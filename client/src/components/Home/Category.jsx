@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { getProductsByCategory } from "../../utils/sanity";
-// import { motion } from "motion";
 import FacialCleaner from "../categories/FacialCleaner";
 import BathAndLaundry from "../categories/BathAndLaundry";
 import HairProduct from "../categories/HairProduct";
@@ -30,13 +29,12 @@ const Category = () => {
           lotionProducts,
           kidsProducts,
         ] = await Promise.all([
-          getProductsByCategory("facial-cleaner"),
+          getProductsByCategory("facial-cleanser"),
           getProductsByCategory("bath-and-laundry"),
           getProductsByCategory("hair-product"),
           getProductsByCategory("lotion"),
           getProductsByCategory("kids-products"),
         ]);
-
         setCategoryProducts({
           facial: facialProducts,
           bath: bathProducts,
@@ -50,7 +48,6 @@ const Category = () => {
         setIsLoading(false);
       }
     };
-
     fetchCategoryProducts();
   }, []);
 
@@ -59,7 +56,6 @@ const Category = () => {
       <div className='flex justify-center mb-4'>
         <span className='text-xl font-semibold'>Shop By Category</span>
       </div>
-
       {isLoading ? (
         <Lazy items={12} />
       ) : (

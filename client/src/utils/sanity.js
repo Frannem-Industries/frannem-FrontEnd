@@ -15,6 +15,7 @@ export async function getProducts() {
     slug,
     price,
     availability,
+    featured,
     "imageUrl": image.asset->url,
     category->{
       name,
@@ -33,6 +34,7 @@ export async function getProductsByCategory(categorySlug) {
     slug,
     price,
     availability,
+    featured,
     "imageUrl": image.asset->url,
     category->{
       name,
@@ -43,7 +45,7 @@ export async function getProductsByCategory(categorySlug) {
   return await sanityClient.fetch(query, { categorySlug })
 }
 
-// Fetch featured products (you can define what makes a product featured in Sanity)
+// Fetch featured products
 export async function getFeaturedProducts() {
   const query = `*[_type == "product" && featured == true]{
     _id,
@@ -51,6 +53,7 @@ export async function getFeaturedProducts() {
     slug,
     price,
     availability,
+    featured,
     "imageUrl": image.asset->url,
     category->{
       name,
@@ -69,6 +72,7 @@ export async function getProductsByAvailability(isAvailable) {
     slug,
     price,
     availability,
+    featured,
     "imageUrl": image.asset->url,
     category->{
       name,
@@ -90,4 +94,23 @@ export async function getBlogs() {
     body
   }`
   return await sanityClient.fetch(query)
+}
+
+// Fetch a single product by slug
+export async function getProductBySlug(slug) {
+  const query = `*[_type == "product" && slug.current == $slug][0]{
+    _id,
+    title,
+    slug,
+    price,
+    description,
+    availability,
+    featured,
+    quantity,
+    "imageUrl": image.asset->url,
+    "category": category->name,
+    "categorySlug": category->slug.current
+  }`;
+  
+  return await sanityClient.fetch(query, { slug });
 }

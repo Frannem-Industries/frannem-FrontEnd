@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 
 const Lotion = ({ products = [] }) => {
+  const displayProducts = products.slice(0, 4);
+  
   return (
     <div className="w-full max-w-7xl">
       <div className="flex justify-between items-center mb-4">
@@ -11,14 +13,19 @@ const Lotion = ({ products = [] }) => {
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.length > 0 ? (
-          products.map((product) => (
+        {displayProducts.length > 0 ? (
+          displayProducts.map((product) => (
             <div key={product._id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <Link to={`/product/${product.slug.current}`}>
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={product.imageUrl} 
-                    alt={product.title} 
+                <div className="relative h-48 overflow-hidden">
+                  {product.featured && (
+                    <div className="absolute top-2 left-2 bg-primary-blue text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+                      Featured
+                    </div>
+                  )}
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
