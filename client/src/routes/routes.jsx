@@ -4,6 +4,7 @@ import Home from "../screens/Home";
 import NotFound from "../screens/NotFound";
 import AboutUs from "../screens/AboutUs";
 import Blog from "../screens/Blog";
+import ViewBlog from "../components/Blog/ViewBlog";
 import Contact from "../screens/Contact";
 import Product from "../components/products/Product";
 import CategoryDisplay from "../screens/CategoryDisplay";
@@ -30,11 +31,11 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: "/profil",
+        path: "/proile",
         element: <Profile />,
       },
       {
-        path: "/orde",
+        path: "/order",
         element: <Orders />,
       },
       {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/blog/:id",
+        element: <ViewBlog />,
       },
       {
         path:"/product/:id",

@@ -47,13 +47,28 @@ export default {
       initialValue: false
     },
     {
-      name: 'image',
-      title: 'Product Image',
+      name: 'mainImage',
+      title: 'Main Product Image',
       type: 'image',
       options: {
         hotspot: true,
       },
       validation: Rule => Rule.required()
+    },
+    {
+      name: 'additionalImages',
+      title: 'Additional Product Images',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          }
+        }
+      ],
+      description: 'Add up to 2 additional product images (3 total including main image)',
+      validation: Rule => Rule.max(2)
     },
     {
       name: 'description',
@@ -73,7 +88,7 @@ export default {
     select: {
       title: 'title',
       category: 'category.name',
-      media: 'image',
+      media: 'mainImage',
       availability: 'availability'
     },
     prepare({ title, category, media, availability }) {
@@ -84,4 +99,4 @@ export default {
       }
     }
   }
-}
+};

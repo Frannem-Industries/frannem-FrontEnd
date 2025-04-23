@@ -8,6 +8,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
   // Handle scroll effect
@@ -27,6 +28,15 @@ const Header = () => {
   // Toggle mobile menu
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    // Close search if menu is opened
+    if (!isMenuOpen) setIsSearchOpen(false);
+  };
+
+  // Toggle search on mobile
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    // Close menu if search is opened
+    if (!isSearchOpen) setIsMenuOpen(false);
   };
 
   // Toggle account dropdown
@@ -131,6 +141,15 @@ const Header = () => {
 
         {/* Account and Cart */}
         <div className='flex items-center gap-4 md:gap-8 order-2 md:order-3'>
+          {/* Search icon for mobile */}
+          <button
+            className='md:hidden text-2xl'
+            onClick={toggleSearch}
+            aria-label='Search'
+          >
+            <Icon icon={"ic:outline-search"} />
+          </button>
+          
           <div className='account-dropdown-container flex items-center gap-2 cursor-pointer relative'>
             <div 
               className='flex items-center gap-2'
@@ -194,21 +213,30 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile search bar */}
-      <div className='md:hidden px-4 pb-3'>
-        <div className='flex border rounded-2xl h-[50px] bg-white items-center justify-center px-4'>
-          <Icon
-            className='text-2xl text-gray-300'
-            icon={"ic:outline-search"}
-          />
-          <input
-            className='outline-none rounded-xl w-full h-full border-none px-4 py-4'
-            type='text'
-            placeholder='Search...'
-            aria-label='Search'
-          />
+      {/* Mobile search bar - only shown when search icon is clicked */}
+      {isSearchOpen && (
+        <div className='md:hidden px-4 pb-3 animate-fadeIn'>
+          <div className='flex border rounded-2xl h-[50px] bg-white items-center justify-center px-4'>
+            <Icon
+              className='text-2xl text-gray-300'
+              icon={"ic:outline-search"}
+            />
+            <input
+              className='outline-none rounded-xl w-full h-full border-none px-4 py-4'
+              type='text'
+              placeholder='Search...'
+              aria-label='Search'
+              autoFocus
+            />
+            <button 
+              onClick={() => setIsSearchOpen(false)}
+              aria-label="Close search"
+            >
+              <Icon icon="mdi:close" className="text-xl text-gray-500" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Navigation links - desktop */}
       <nav className='hidden md:flex justify-center bg-gray-50 py-3 px-4 md:px-16'>
@@ -232,7 +260,7 @@ const Header = () => {
 
       {/* Mobile navigation menu */}
       {isMenuOpen && (
-        <nav className='md:hidden bg-white border-t'>
+        <nav className='md:hidden bg-white border-t animate-slideDown'>
           <ul className='flex flex-col'>
             {navLinks.map((link) => (
               <li key={link.name} className='border-b'>

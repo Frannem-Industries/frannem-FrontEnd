@@ -48,6 +48,7 @@ const Category = () => {
         setIsLoading(false);
       }
     };
+
     fetchCategoryProducts();
   }, []);
 

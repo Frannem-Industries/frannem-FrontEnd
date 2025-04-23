@@ -11,6 +11,20 @@ export default {
         "primary-green": "#196c1f",
         "primary-orange": "#FF6C07",
       },
+      animation: {
+        'fadeIn': 'fadeIn 0.2s ease-in-out',
+        'slideDown': 'slideDown 0.3s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideDown: {
+          '0%': { maxHeight: '0', opacity: '0' },
+          '100%': { maxHeight: '500px', opacity: '1' },
+        },
+      },
     },
   },
   plugins: [],

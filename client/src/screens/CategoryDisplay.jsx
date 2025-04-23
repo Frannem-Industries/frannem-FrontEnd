@@ -30,16 +30,16 @@ const CategoryDisplay = () => {
         
         setCategory(categoryData);
         
-        // Then fetch all products in this category
-        const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
-          _id,
-          title,
-          slug,
-          price,
-          availability,
-          featured,
-          "imageUrl": image.asset->url
-        }`;
+const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
+  _id,
+  title,
+  slug,
+  price,
+  availability,
+  featured,
+  "imageUrl": mainImage.asset->url
+}`;
+
         
         const productsData = await sanityClient.fetch(productsQuery, { slug: id });
         setProducts(productsData);

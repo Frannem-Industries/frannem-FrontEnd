@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { sanityClient } from "../../utils/sanity"; // Updated import
-import Lazy from "../ui/Lazy"; // Updated path
+import { sanityClient } from "../../utils/sanity";
+import Lazy from "../ui/Lazy";
 
 const Product = () => {
   const { id } = useParams();
@@ -13,6 +13,8 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("description");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [allImages, setAllImages] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -28,7 +30,10 @@ const Product = () => {
           availability,
           featured,
           quantity,
-          "imageUrl": image.asset->url,
+          "imageUrl": mainImage.asset->url,
+          "additionalImages": additionalImages[]{
+            "url": asset->url
+          },
           "category": category->name,
           "categorySlug": category->slug.current
         }`;
@@ -41,6 +46,13 @@ const Product = () => {
         
         setProduct(product);
         
+        // Combine main image with additional images
+        const images = [
+          { url: product.imageUrl },
+          ...(product.additionalImages || [])
+        ];
+        setAllImages(images);
+        
         // Fetch related products from the same category
         const relatedQuery = `*[_type == "product" && category->slug.current == $categorySlug && slug.current != $slug][0...4]{
           _id,
@@ -49,10 +61,10 @@ const Product = () => {
           price,
           availability,
           featured,
-          "imageUrl": image.asset->url
+          "imageUrl": mainImage.asset->url
         }`;
         
-        const related = await sanityClient.fetch(relatedQuery, { 
+        const related = await sanityClient.fetch(relatedQuery, {
           categorySlug: product.categorySlug,
           slug: id
         });
@@ -72,6 +84,7 @@ const Product = () => {
     
     // Reset scroll position when product changes
     window.scrollTo(0, 0);
+    setActiveImageIndex(0); // Reset active image when product changes
   }, [id]);
 
   const handleQuantityChange = (value) => {
@@ -99,8 +112,8 @@ const Product = () => {
         <Icon icon="mdi:alert-circle-outline" className="text-5xl text-red-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Product Not Found</h2>
         <p className="text-gray-600 mb-6">{error}</p>
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center px-4 py-2 bg-primary-blue text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           <Icon icon="mdi:arrow-left" className="mr-2" />
@@ -135,8 +148,8 @@ const Product = () => {
 
       {/* Product Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {/* Product Image */}
-        <motion.div 
+        {/* Product Image Gallery */}
+        <motion.div
           className="bg-white rounded-lg overflow-hidden shadow-md"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,12 +161,33 @@ const Product = () => {
                 Featured
               </div>
             )}
-            <img 
-              src={product.imageUrl} 
-              alt={product.title} 
+            <img
+              src={allImages[activeImageIndex]?.url}
+              alt={product.title}
               className="w-full h-[400px] object-contain"
             />
           </div>
+          
+          {/* Thumbnail Gallery */}
+          {allImages.length > 1 && (
+            <div className="flex justify-center gap-2 mt-2">
+              {allImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveImageIndex(index)}
+                  className={`border-2 rounded overflow-hidden w-16 h-16 ${
+                    activeImageIndex === index ? 'border-primary-blue' : 'border-gray-200'
+                  }`}
+                >
+                  <img
+                    src={image.url}
+                    alt={`${product.title} - Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Product Info */}
@@ -168,9 +202,9 @@ const Product = () => {
           <div className="flex items-center mb-4">
             <div className="flex items-center">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Icon 
+                <Icon
                   key={star}
-                  icon="mdi:star" 
+                  icon="mdi:star"
                   className="text-yellow-400 text-xl"
                 />
               ))}
@@ -186,12 +220,12 @@ const Product = () => {
           
           <div className="mb-6">
             <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-              product.availability 
-                ? 'bg-green-100 text-green-800' 
+              product.availability
+                ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             }`}>
-              <Icon 
-                icon={product.availability ? "mdi:check-circle" : "mdi:close-circle"} 
+              <Icon
+                icon={product.availability ? "mdi:check-circle" : "mdi:close-circle"}
                 className="mr-1"
               />
               {product.availability ? 'In Stock' : 'Out of Stock'}
@@ -202,7 +236,7 @@ const Product = () => {
             <p className="text-gray-700 mb-4 line-clamp-3">
               {product.description || "No description available for this product."}
             </p>
-            <button 
+            <button
               className="text-primary-blue hover:underline flex items-center"
               onClick={() => setActiveTab("description")}
             >
@@ -216,7 +250,7 @@ const Product = () => {
               <div className="flex items-center mb-6">
                 <span className="mr-4 text-gray-700">Quantity:</span>
                 <div className="flex items-center border rounded-md">
-                  <button 
+                  <button
                     onClick={() => handleQuantityChange(-1)}
                     className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                     disabled={quantity <= 1}
@@ -224,7 +258,7 @@ const Product = () => {
                     <Icon icon="mdi:minus" />
                   </button>
                   <span className="px-4 py-1 border-x">{quantity}</span>
-                  <button 
+                  <button
                     onClick={() => handleQuantityChange(1)}
                     className="px-3 py-1 text-gray-600 hover:bg-gray-100"
                     disabled={quantity >= (product.quantity || 10)}
@@ -253,7 +287,8 @@ const Product = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Icon icon="mdi:heart-outline" className="mr-2" />
+                 
+                 <Icon icon="mdi:heart-outline" className="mr-2" />
                   Add to Wishlist
                 </motion.button>
               </div>
@@ -284,8 +319,8 @@ const Product = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`py-4 font-medium text-sm uppercase tracking-wide border-b-2 transition-colors ${
-                  activeTab === tab 
-                    ? 'border-primary-blue text-primary-blue' 
+                  activeTab === tab
+                    ? 'border-primary-blue text-primary-blue'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -321,11 +356,11 @@ const Product = () => {
               <h3 className="text-lg font-semibold mb-4">Shipping & Returns</h3>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  <strong>Delivery:</strong> Free standard shipping on all orders within Nigeria. 
+                  <strong>Delivery:</strong> Free standard shipping on all orders within Nigeria.
                   Delivery typically takes 3-5 business days depending on your location.
                 </p>
                 <p>
-                  <strong>Returns:</strong> We offer a 30-day return policy. If you're not satisfied with your purchase, 
+                  <strong>Returns:</strong> We offer a 30-day return policy. If you're not satisfied with your purchase,
                   you can return it within 30 days for a full refund or exchange.
                 </p>
                 <p>
@@ -343,8 +378,8 @@ const Product = () => {
           <h2 className="text-2xl font-bold mb-6">Related Products</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {relatedProducts.map((item) => (
-              <Link 
-                key={item._id} 
+              <Link
+                key={item._id}
                 to={`/product/${item.slug.current}`}
                 className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
@@ -364,7 +399,8 @@ const Product = () => {
                   <h3 className="font-medium text-sm truncate">{item.title}</h3>
                   <div className="flex justify-between items-center mt-2">
                     <span className="font-bold text-primary-blue">₦{item.price.toLocaleString()}</span>
-                    {item.availability ? (                      <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">In Stock</span>
+                    {item.availability ? (
+                      <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">In Stock</span>
                     ) : (
                       <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">Out of Stock</span>
                     )}
@@ -380,4 +416,3 @@ const Product = () => {
 };
 
 export default Product;
-

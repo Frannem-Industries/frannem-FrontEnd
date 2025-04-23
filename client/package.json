@@ -12,6 +12,7 @@
   "dependencies": {
     "@portabletext/react": "^3.2.1",
     "@sanity/client": "^6.29.0",
+    "date-fns": "^4.1.0",
     "motion": "^12.7.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
