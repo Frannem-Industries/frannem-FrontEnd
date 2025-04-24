@@ -16,6 +16,9 @@ const ViewBlog = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Ensure body overflow is set to auto when component mounts
+    document.body.style.overflow = 'auto';
+    
     const fetchBlog = async () => {
       setIsLoading(true);
       try {
@@ -62,6 +65,11 @@ const ViewBlog = () => {
     
     // Reset scroll position when blog changes
     window.scrollTo(0, 0);
+    
+    // Cleanup function to ensure body overflow is reset when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [id]);
 
   const components = {
@@ -284,5 +292,3 @@ const ViewBlog = () => {
 };
 
 export default ViewBlog;
-
-  
