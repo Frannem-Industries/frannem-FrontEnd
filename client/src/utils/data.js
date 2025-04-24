@@ -97,3 +97,22 @@ export const customerService = [
     link: "/",
   },
 ];
+
+export const socialLinks = [
+  {
+    name: "Facebook",
+    link: "https://www.facebook.com/share/1EBHXN4fHi/",
+  },
+  {
+    name: "Instagram",
+    link: "https://www.instagram.com/franemmltd/profilecard",
+  },
+  {
+    name: "Twitter",
+    link: "https://x.com/franemmltd?s=21",
+  },
+  {
+    name: "LinkedIn",
+    link: "https://www.linkedin.com/company/franemm-industries-ltd/",
+  },
+];

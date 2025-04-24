@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { PortableText } from '@portabletext/react';
 import { sanityClient } from '../../utils/sanity';
 import Lazy from '../ui/Lazy';
+import SEO from "../SEO/SEO";
 
 const ViewBlog = () => {
   const { id } = useParams();
@@ -29,7 +30,8 @@ const ViewBlog = () => {
           slug,
           "coverImageUrl": coverImage.asset->url,
           publishedAt,
-          body
+          body,
+          excerpt
         }`;
         
         const blogData = await sanityClient.fetch(query, { slug: id });
@@ -111,6 +113,7 @@ const ViewBlog = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -130,164 +133,203 @@ const ViewBlog = () => {
 
   if (!blog) return null;
 
+  // Extract a description from the blog content
+  // First try to use excerpt if available, otherwise create one from the first paragraph of body content
+  const getDescription = () => {
+    if (blog.excerpt) return blog.excerpt;
+    
+    // Try to extract text from the first paragraph of the body
+    if (blog.body && Array.isArray(blog.body)) {
+      const firstParagraph = blog.body.find(
+        block => block._type === 'block' && block.style === 'normal'
+      );
+      
+      if (firstParagraph && firstParagraph.children) {
+        const text = firstParagraph.children
+          .filter(child => child._type === 'span')
+          .map(span => span.text)
+          .join('');
+          
+        // Return truncated text (around 160 characters for SEO)
+        return text.length > 160 ? text.substring(0, 157) + '...' : text;
+      }
+    }
+    
+    // Fallback description
+    return `Read our blog post: ${blog.title}`;
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Breadcrumb */}
-      <motion.nav 
-        className="flex mb-6 text-sm"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <ol className="flex items-center space-x-2">
-          <li>
-            <Link to="/" className="text-gray-500 hover:text-primary-blue">Home</Link>
-          </li>
-          <li className="flex items-center">
-            <Icon icon="mdi:chevron-right" className="text-gray-400 mx-1" />
-            <Link to="/blog" className="text-gray-500 hover:text-primary-blue">Blog</Link>
-          </li>
-          <li className="flex items-center">
-            <Icon icon="mdi:chevron-right" className="text-gray-400 mx-1" />
-            <span className="text-gray-800 font-medium truncate">{blog.title}</span>
-          </li>
-        </ol>
-      </motion.nav>
+    <>
+      {/* SEO Component */}
+      <SEO
+        title={`${blog.title} | Franemm Blog`}
+        description={getDescription()}
+        image={blog.coverImageUrl}
+        url={`/blog/${blog.slug.current}`}
+        canonicalUrl={`/blog/${blog.slug.current}`}
+        type="article"
+        publishedAt={blog.publishedAt}
+      />
 
-      {/* Blog Header */}
-      <motion.div 
-        className="mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{blog.title}</h1>
-        <div className="flex items-center text-gray-600 mb-6">
-          <div className="flex items-center">
-            <Icon icon="mdi:calendar" className="mr-2" />
-            <span>
-              {blog.publishedAt ? 
-                format(new Date(blog.publishedAt), 'MMMM dd, yyyy') : 
-                'Recently Published'}
-            </span>
-          </div>
-          <span className="mx-3">•</span>
-          <div className="flex items-center">
-            <Icon icon="mdi:account" className="mr-2" />
-            <span>Frannem Industries</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Cover Image */}
-      {blog.coverImageUrl && (
-        <motion.div 
-          className="mb-8 rounded-xl overflow-hidden shadow-lg"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Breadcrumb */}
+        <motion.nav
+          className="flex mb-6 text-sm"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          <img 
-            src={blog.coverImageUrl} 
-            alt={blog.title}
-            className="w-full h-auto object-cover"
-          />
+          <ol className="flex items-center space-x-2">
+            <li>
+              <Link to="/" className="text-gray-500 hover:text-primary-blue">Home</Link>
+            </li>
+            <li className="flex items-center">
+              <Icon icon="mdi:chevron-right" className="text-gray-400 mx-1" />
+              <Link to="/blog" className="text-gray-500 hover:text-primary-blue">Blog</Link>
+            </li>
+            <li className="flex items-center">
+              <Icon icon="mdi:chevron-right" className="text-gray-400 mx-1" />
+              <span className="text-gray-800 font-medium truncate">{blog.title}</span>
+            </li>
+          </ol>
+        </motion.nav>
+
+        {/* Blog Header */}
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{blog.title}</h1>
+          <div className="flex items-center text-gray-600 mb-6">
+            <div className="flex items-center">
+              <Icon icon="mdi:calendar" className="mr-2" />
+              <span>
+                {blog.publishedAt ?
+                  format(new Date(blog.publishedAt), 'MMMM dd, yyyy') :
+                  'Recently Published'}
+              </span>
+            </div>
+            <span className="mx-3">•</span>
+            <div className="flex items-center">
+              <Icon icon="mdi:account" className="mr-2" />
+              <span>Frannem Industries</span>
+            </div>
+          </div>
         </motion.div>
-      )}
 
-      {/* Blog Content */}
-      <motion.div 
-        className="prose prose-lg max-w-none mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        {blog.body && <PortableText value={blog.body} components={components} />}
-      </motion.div>
+        {/* Cover Image */}
+        {blog.coverImageUrl && (
+          <motion.div
+            className="mb-8 rounded-xl overflow-hidden shadow-lg"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <img
+              src={blog.coverImageUrl}
+              alt={blog.title}
+              className="w-full h-auto object-cover"
+            />
+          </motion.div>
+        )}
 
-      {/* Share Buttons */}
-      <motion.div 
-        className="border-t border-b py-6 mb-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-      >
-        <div className="flex flex-col sm:flex-row items-center justify-between">
-          <div className="mb-4 sm:mb-0">
-            <h3 className="font-medium text-gray-700 mb-2">Share this article</h3>
-            <div className="flex space-x-3">
-              <button className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors">
-                <Icon icon="mdi:facebook" className="text-xl" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center hover:bg-blue-500 transition-colors">
-                <Icon icon="mdi:twitter" className="text-xl" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors">
-                <Icon icon="mdi:whatsapp" className="text-xl" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition-colors">
-                <Icon icon="mdi:linkedin" className="text-xl" />
+        {/* Blog Content */}
+        <motion.div
+          className="prose prose-lg max-w-none mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {blog.body && <PortableText value={blog.body} components={components} />}
+        </motion.div>
+
+        {/* Share Buttons */}
+        <motion.div
+          className="border-t border-b py-6 mb-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <div className="mb-4 sm:mb-0">
+              <h3 className="font-medium text-gray-700 mb-2">Share this article</h3>
+              <div className="flex space-x-3">
+                <button className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors">
+                  <Icon icon="mdi:facebook" className="text-xl" />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center hover:bg-blue-500 transition-colors">
+                  <Icon icon="mdi:twitter" className="text-xl" />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors">
+                  <Icon icon="mdi:whatsapp" className="text-xl" />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition-colors">
+                  <Icon icon="mdi:linkedin" className="text-xl" />
+                </button>
+              </div>
+            </div>
+            <div className="flex">
+              <button
+                onClick={() => navigate('/blog')}
+                className="flex items-center text-primary-blue hover:underline"
+              >
+                <Icon icon="mdi:arrow-left" className="mr-2" />
+                Back to all articles
               </button>
             </div>
           </div>
-          <div className="flex">
-            <button 
-              onClick={() => navigate('/blog')}
-              className="flex items-center text-primary-blue hover:underline"
-            >
-              <Icon icon="mdi:arrow-left" className="mr-2" />
-              Back to all articles
-            </button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Related Articles */}
-      {relatedBlogs.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {relatedBlogs.map((relatedBlog) => (
-              <Link 
-                key={relatedBlog._id} 
-                to={`/blog/${relatedBlog.slug.current}`}
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                <div className="h-48 overflow-hidden">
-                  {relatedBlog.coverImageUrl ? (
-                    <img 
-                      src={relatedBlog.coverImageUrl} 
-                      alt={relatedBlog.title}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <Icon icon="mdi:image-outline" className="text-4xl text-gray-400" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <div className="text-xs text-gray-500 mb-2">
-                    {relatedBlog.publishedAt ? 
-                      format(new Date(relatedBlog.publishedAt), 'MMMM dd, yyyy') : 
-                      'Recently Published'}
-                  </div>
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{relatedBlog.title}</h3>
-                  <div className="flex items-center text-primary-blue text-sm font-medium">
-                    Read Article
-                    <Icon icon="mdi:arrow-right" className="ml-1 text-xs" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
         </motion.div>
-      )}
-    </div>
+
+        {/* Related Articles */}
+        {relatedBlogs.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedBlogs.map((relatedBlog) => (
+                <Link
+                  key={relatedBlog._id}
+                  to={`/blog/${relatedBlog.slug.current}`}
+                  className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="h-48 overflow-hidden">
+                    {relatedBlog.coverImageUrl ? (
+                      <img
+                        src={relatedBlog.coverImageUrl}
+                        alt={relatedBlog.title}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <Icon icon="mdi:image-outline" className="text-4xl text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <div className="text-xs text-gray-500 mb-2">
+                      {relatedBlog.publishedAt ?
+                        format(new Date(relatedBlog.publishedAt), 'MMMM dd, yyyy') :
+                        'Recently Published'}
+                    </div>
+                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{relatedBlog.title}</h3>
+                    <div className="flex items-center text-primary-blue text-sm font-medium">
+                      Read Article
+                      <Icon icon="mdi:arrow-right" className="ml-1 text-xs" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { sanityClient } from '../utils/sanity';
 import Lazy from '../components/ui/Lazy';
+import SEO from '../components/SEO/SEO'; // Import the SEO component
 
 const CategoryDisplay = () => {
   const { id } = useParams();
@@ -15,32 +16,25 @@ const CategoryDisplay = () => {
     const fetchCategoryProducts = async () => {
       setIsLoading(true);
       try {
-        // First, fetch the category details
         const categoryQuery = `*[_type == "category" && slug.current == $slug][0]{
           _id,
           name,
-          description
+          description,
+          "imageUrl": image.asset->url
         }`;
-        
         const categoryData = await sanityClient.fetch(categoryQuery, { slug: id });
-        
-        if (!categoryData) {
-          throw new Error("Category not found");
-        }
-        
+        if (!categoryData) throw new Error("Category not found");
         setCategory(categoryData);
-        
-const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
-  _id,
-  title,
-  slug,
-  price,
-  availability,
-  featured,
-  "imageUrl": mainImage.asset->url
-}`;
 
-        
+        const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
+          _id,
+          title,
+          slug,
+          price,
+          availability,
+          featured,
+          "imageUrl": mainImage.asset->url
+        }`;
         const productsData = await sanityClient.fetch(productsQuery, { slug: id });
         setProducts(productsData);
       } catch (err) {
@@ -50,10 +44,8 @@ const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
         setIsLoading(false);
       }
     };
-    
-    if (id) {
-      fetchCategoryProducts();
-    }
+
+    if (id) fetchCategoryProducts();
   }, [id]);
 
   if (isLoading) {
@@ -67,6 +59,10 @@ const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
   if (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
+        <SEO 
+          title="Category Not Found" 
+          description="The requested category could not be found."
+        />
         <Icon icon="mdi:alert-circle-outline" className="text-5xl text-red-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Category Not Found</h2>
         <p className="text-gray-600 mb-6">{error}</p>
@@ -83,6 +79,17 @@ const productsQuery = `*[_type == "product" && category->slug.current == $slug]{
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* SEO Component */}
+      {category && (
+        <SEO
+          title={category.name}
+          description={category.description}
+          image={category.imageUrl}
+          url={`/category/${id}`}
+          canonicalUrl={`/category/${id}`}
+        />
+      )}
+
       {/* Breadcrumb */}
       <nav className="flex mb-6 text-sm">
         <ol className="flex items-center space-x-2">

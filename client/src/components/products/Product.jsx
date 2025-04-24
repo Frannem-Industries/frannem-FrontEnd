@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { sanityClient } from "../../utils/sanity";
 import Lazy from "../ui/Lazy";
+import SEO from "../SEO/SEO"; // Import the new SEO component
 
 const Product = () => {
   const { id } = useParams();
@@ -109,6 +110,7 @@ const Product = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
+        <SEO title="Product Not Found" description="The requested product could not be found." />
         <Icon icon="mdi:alert-circle-outline" className="text-5xl text-red-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Product Not Found</h2>
         <p className="text-gray-600 mb-6">{error}</p>
@@ -127,6 +129,16 @@ const Product = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* SEO Component */}
+      <SEO
+        title={product.title}
+        description={product.description}
+        image={allImages[0]?.url}
+        type="product"
+        url={`/product/${product.slug.current}`}
+        canonicalUrl={`/product/${product.slug.current}`}
+      />
+
       {/* Breadcrumb */}
       <nav className="flex mb-6 text-sm">
         <ol className="flex items-center space-x-2">
@@ -287,8 +299,7 @@ const Product = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                 
-                 <Icon icon="mdi:heart-outline" className="mr-2" />
+                  <Icon icon="mdi:heart-outline" className="mr-2" />
                   Add to Wishlist
                 </motion.button>
               </div>

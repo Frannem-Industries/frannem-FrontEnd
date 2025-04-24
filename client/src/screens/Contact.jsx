@@ -1,47 +1,9 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { details } from "../utils/data";
+import { details, socialLinks } from "../utils/data";
+import SEO from "../components/SEO/SEO";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    try {
-      // Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setSubmitStatus({
-        success: true,
-        message: "Your message has been sent successfully!",
-      });
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    } catch (error) {
-      setSubmitStatus({
-        success: false,
-        message: "Failed to send message. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -62,49 +24,67 @@ const Contact = () => {
     },
   };
 
-  return (
-    <motion.div
-      className='max-w-7xl mx-auto px-4 py-16 md:py-24'
-      initial='hidden'
-      animate='visible'
-      variants={staggerContainer}
-    >
-      {/* Header Section */}
-      <motion.div className='text-center mb-16' variants={fadeIn}>
-        <motion.h1
-          className='text-3xl md:text-4xl lg:text-5xl font-bold text-primary-blue mb-4'
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 100,
-            damping: 10,
-          }}
-        >
-          YOU'RE WELCOME
-        </motion.h1>
-        <motion.h2
-          className='text-2xl md:text-3xl font-semibold text-gray-800 mb-6'
-          variants={fadeIn}
-        >
-          KEEP IN TOUCH
-        </motion.h2>
-        <motion.p
-          className='text-gray-600 max-w-2xl mx-auto'
-          variants={fadeIn}
-        >
-          We are willing to do business with you, be sure to always get the
-          best deals. We are available at all times and we would be glad to
-          start a business relationship with you. Contact us for more
-          detail on how to be part of the Franemm Family.
-        </motion.p>
-      </motion.div>
+  // Map social media names to their respective icons
+  const getSocialIcon = (name) => {
+    const iconMap = {
+      "Facebook": "mdi:facebook",
+      "Instagram": "mdi:instagram",
+      "Twitter": "mdi:twitter",
+      "LinkedIn": "mdi:linkedin"
+    };
+    
+    return iconMap[name] || "mdi:link";
+  };
 
-      {/* Main Content */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-12 items-start'>
-        {/* Contact Information */}
+  return (
+    <>
+      {/* SEO Component */}
+      <SEO
+        title="Contact Us"
+        description="Get in touch with Franemm Industries. We are willing to do business with you and be sure to always get the best deals. Contact us for more details on how to be part of the Franemm Family."
+        url="/contact"
+        canonicalUrl="/contact"
+      />
+      <motion.div
+        className='max-w-7xl mx-auto px-4 py-16 md:py-24'
+        initial='hidden'
+        animate='visible'
+        variants={staggerContainer}
+      >
+        {/* Header Section */}
+        <motion.div className='text-center mb-16' variants={fadeIn}>
+          <motion.h1
+            className='text-3xl md:text-4xl lg:text-5xl font-bold text-primary-blue mb-4'
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 100,
+              damping: 10,
+            }}
+          >
+            YOU'RE WELCOME
+          </motion.h1>
+          <motion.h2
+            className='text-2xl md:text-3xl font-semibold text-gray-800 mb-6'
+            variants={fadeIn}
+          >
+            KEEP IN TOUCH
+          </motion.h2>
+          <motion.p
+            className='text-gray-600 max-w-2xl mx-auto'
+            variants={fadeIn}
+          >
+            We are willing to do business with you, be sure to always get the
+            best deals. We are available at all times and we would be glad to
+            start a business relationship with you. Contact us for more
+            detail on how to be part of the Franemm Family.
+          </motion.p>
+        </motion.div>
+        
+        {/* Main Content */}
         <motion.div
-          className='bg-white rounded-xl shadow-lg p-8'
+          className='bg-white rounded-xl shadow-lg p-8 max-w-3xl mx-auto'
           variants={fadeIn}
           whileHover={{
             y: -5,
@@ -114,7 +94,6 @@ const Contact = () => {
           <h3 className='text-2xl font-bold text-primary-blue mb-6'>
             Contact Information
           </h3>
-
           <div className='space-y-6'>
             <motion.div
               className='flex items-start space-x-4'
@@ -133,7 +112,6 @@ const Contact = () => {
                 <p className='text-gray-600'>{details.address}</p>
               </div>
             </motion.div>
-
             <motion.div
               className='flex items-start space-x-4'
               variants={fadeIn}
@@ -152,7 +130,6 @@ const Contact = () => {
                 <p className='text-gray-600'>+234 811 397 9275</p>
               </div>
             </motion.div>
-
             <motion.div
               className='flex items-start space-x-4'
               variants={fadeIn}
@@ -171,182 +148,85 @@ const Contact = () => {
               </div>
             </motion.div>
           </div>
-
+          
           {/* Social Media Links */}
           <motion.div className='mt-10' variants={fadeIn}>
             <h4 className='font-semibold text-gray-800 mb-4'>
               CONNECT WITH US
             </h4>
             <div className='flex space-x-4'>
-              {[
-                { icon: "mdi:facebook", label: "Facebook" },
-                { icon: "mdi:twitter", label: "Twitter" },
-                { icon: "mdi:instagram", label: "Instagram" },
-                { icon: "mdi:linkedin", label: "LinkedIn" },
-              ].map((social) => (
+              {socialLinks.map((social) => (
                 <motion.a
-                  key={social.label}
-                  href='#'
-                  aria-label={social.label}
+                  key={social.name}
+                  href={social.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
                   className='bg-primary-blue text-white p-3 rounded-full hover:bg-blue-700 transition-colors'
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <Icon icon={social.icon} className='text-xl' />
+                  <Icon icon={getSocialIcon(social.name)} className='text-xl' />
                 </motion.a>
               ))}
             </div>
           </motion.div>
-
-          {/* Map or Image */}
+          
+          {/* Map */}
           <motion.div
-            className='mt-10 rounded-lg overflow-hidden h-64 bg-gray-200'
+            className='mt-10 rounded-lg overflow-hidden h-80'
             variants={fadeIn}
           >
-            {/* Replace with actual map or image */}
-            <div className='w-full h-full flex items-center justify-center text-gray-500'>
-              <p>Map location will be displayed here</p>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.7286767086897!2d3.3751328!3d6.4548513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2a74c7f76d%3A0x7ac7e0e5b1520b26!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2s!4v1650000000000!5m2!1sen!2s"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Franemm Industries Location"
+            ></iframe>
+          </motion.div>
+          
+          {/* Business Hours */}
+          <motion.div className='mt-10' variants={fadeIn}>
+            <h4 className='font-semibold text-gray-800 mb-4'>
+              BUSINESS HOURS
+            </h4>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='bg-gray-50 p-4 rounded-lg'>
+                <h5 className='font-medium text-gray-700 mb-2'>Weekdays</h5>
+                <p className='text-gray-600'>Monday - Friday: 8:00 AM - 6:00 PM</p>
+              </div>
+              <div className='bg-gray-50 p-4 rounded-lg'>
+                <h5 className='font-medium text-gray-700 mb-2'>Weekends</h5>
+                <p className='text-gray-600'>Saturday: 9:00 AM - 4:00 PM</p>
+                <p className='text-gray-600'>Sunday: Closed</p>
+              </div>
             </div>
           </motion.div>
-        </motion.div>
-
-        {/* Contact Form */}
-        <motion.div
-          className='bg-white rounded-xl shadow-lg p-8'
-          variants={fadeIn}
-          whileHover={{
-            y: -5,
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-          }}
-        >
-          <h3 className='text-2xl font-bold text-primary-blue mb-6'>
-            Send Us a Message
-          </h3>
-
-          <form onSubmit={handleSubmit} className='space-y-6'>
-            <motion.div variants={fadeIn}>
-              <label
-                htmlFor='name'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                Your Name <span className='text-red-500'>*</span>
-              </label>
-              <input
-                type='text'
-                id='name'
-                name='name'
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-primary-blue transition-colors'
-                placeholder='Enter your full name'
-              />
-            </motion.div>
-
-            <motion.div variants={fadeIn}>
-              <label
-                htmlFor='email'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                Email address <span className='text-red-500'>*</span>
-              </label>
-              <input
-                type='email'
-                id='email'
-                name='email'
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-primary-blue transition-colors'
-                placeholder='Enter your email address'
-              />
-            </motion.div>
-
-            <motion.div variants={fadeIn}>
-              <label
-                htmlFor='subject'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                Subject
-              </label>
-              <input
-                type='text'
-                id='subject'
-                name='subject'
-                value={formData.subject}
-                onChange={handleChange}
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-primary-blue transition-colors'
-                placeholder='What is this regarding?'
-              />
-            </motion.div>
-
-            <motion.div variants={fadeIn}>
-              <label
-                htmlFor='message'
-                className='block text-sm font-medium text-gray-700 mb-1'
-              >
-                Message <span className='text-red-500'>*</span>
-              </label>
-              <textarea
-                id='message'
-                name='message'
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows='5'
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-primary-blue transition-colors'
-                placeholder='How can we help you?'
-              ></textarea>
-            </motion.div>
-
-            {submitStatus && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`p-3 rounded-lg ${
-                  submitStatus.success
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {submitStatus.message}
-              </motion.div>
-            )}
-
-            <motion.button
-              type='submit'
-              disabled={isSubmitting}
-              className={`w-full bg-primary-blue text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-colors ${
-                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              variants={fadeIn}
-            >
-              {isSubmitting ? (
-                <span className='flex items-center justify-center'>
-                  <Icon
-                    icon='eos-icons:loading'
-                    className='animate-spin mr-2'
-                  />
-                  Sending...
-                </span>
-              ) : (
-                "Send Message"
-              )}
-            </motion.button>
-          </form>
-
-          <motion.p
-            className='text-sm text-gray-500 mt-6'
+          
+          {/* Call to Action */}
+          <motion.div 
+            className='mt-10 text-center bg-primary-blue/5 p-6 rounded-lg'
             variants={fadeIn}
           >
-            By submitting this form, you agree to our privacy policy and
-            terms of service.
-          </motion.p>
+            <h4 className='font-bold text-xl text-primary-blue mb-3'>Ready to get started?</h4>
+            <p className='text-gray-600 mb-4'>Reach out to us today and let's discuss how we can work together.</p>
+            <motion.a
+              href={`mailto:${details.email}`}
+              className='inline-flex items-center px-6 py-3 bg-primary-blue text-white rounded-lg font-medium hover:bg-blue-700 transition-colors'
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Icon icon="mdi:email-outline" className="mr-2" />
+              Email Us Now
+            </motion.a>
+          </motion.div>
         </motion.div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

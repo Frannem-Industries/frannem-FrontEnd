@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { details, navLinks } from "../utils/data";
+import { details, navLinks, socialLinks } from "../utils/data";
 import { logo } from "../assets/index";
 import { Link, useLocation } from "react-router-dom";
 
@@ -20,7 +20,6 @@ const Header = () => {
         setScrolled(false);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -51,12 +50,23 @@ const Header = () => {
         setIsAccountDropdownOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isAccountDropdownOpen]);
+
+  // Map social media names to their respective icons
+  const getSocialIcon = (name) => {
+    const iconMap = {
+      "Facebook": "mdi:facebook",
+      "Instagram": "mdi:instagram",
+      "Twitter": "mdi:twitter",
+      "LinkedIn": "mdi:linkedin"
+    };
+    
+    return iconMap[name] || "mdi:link";
+  };
 
   return (
     <header
@@ -76,42 +86,22 @@ const Header = () => {
           </a>
         </div>
         <div className='text-white flex items-center gap-4'>
-          <a
-            href='https://instagram.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            aria-label='Instagram'
-          >
-            <Icon
-              className='text-xl hover:text-gray-200 transition-colors'
-              icon={"mdi:instagram"}
-            />
-          </a>
-          <a
-            href='https://facebook.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            aria-label='Facebook'
-          >
-            <Icon
-              className='text-xl hover:text-gray-200 transition-colors'
-              icon={"mdi:facebook"}
-            />
-          </a>
-          <a
-            href='https://twitter.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            aria-label='Twitter'
-          >
-            <Icon
-              className='text-xl hover:text-gray-200 transition-colors'
-              icon={"mdi:twitter"}
-            />
-          </a>
+          {socialLinks.map((social) => (
+            <a
+              key={social.name}
+              href={social.link}
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label={social.name}
+            >
+              <Icon
+                className='text-xl hover:text-gray-200 transition-colors'
+                icon={getSocialIcon(social.name)}
+              />
+            </a>
+          ))}
         </div>
       </div>
-
       {/* Main header */}
       <div className='mt-2 flex flex-wrap items-center justify-between px-4 md:px-16 py-2'>
         {/* Logo */}
@@ -124,7 +114,6 @@ const Header = () => {
             />
           </Link>
         </div>
-
         {/* Search bar - hidden on mobile, shown on tablet and up */}
         <div className='hidden md:flex border rounded-2xl w-full md:w-[400px] lg:w-[580px] h-[60px] bg-white items-center justify-center px-4 my-3 md:my-0 order-3 md:order-2'>
           <Icon
@@ -138,7 +127,6 @@ const Header = () => {
             aria-label='Search'
           />
         </div>
-
         {/* Account and Cart */}
         <div className='flex items-center gap-4 md:gap-8 order-2 md:order-3'>
           {/* Search icon for mobile */}
@@ -151,7 +139,7 @@ const Header = () => {
           </button>
           
           <div className='account-dropdown-container flex items-center gap-2 cursor-pointer relative'>
-            <div 
+            <div
               className='flex items-center gap-2'
               onClick={toggleAccountDropdown}
             >
@@ -201,7 +189,6 @@ const Header = () => {
               0
             </span>
           </div>
-
           {/* Mobile menu button */}
           <button
             className='md:hidden text-2xl ml-2'
@@ -212,7 +199,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-
       {/* Mobile search bar - only shown when search icon is clicked */}
       {isSearchOpen && (
         <div className='md:hidden px-4 pb-3 animate-fadeIn'>
@@ -228,7 +214,7 @@ const Header = () => {
               aria-label='Search'
               autoFocus
             />
-            <button 
+            <button
               onClick={() => setIsSearchOpen(false)}
               aria-label="Close search"
             >
@@ -237,7 +223,6 @@ const Header = () => {
           </div>
         </div>
       )}
-
       {/* Navigation links - desktop */}
       <nav className='hidden md:flex justify-center bg-gray-50 py-3 px-4 md:px-16'>
         <ul className='flex space-x-8'>
@@ -257,7 +242,6 @@ const Header = () => {
           ))}
         </ul>
       </nav>
-
       {/* Mobile navigation menu */}
       {isMenuOpen && (
         <nav className='md:hidden bg-white border-t animate-slideDown'>

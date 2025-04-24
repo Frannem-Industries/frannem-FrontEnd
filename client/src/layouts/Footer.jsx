@@ -5,11 +5,24 @@ import {
   information,
   customerService,
   details,
+  socialLinks
 } from "../utils/data";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
+  // Map social media names to their respective icons
+  const getSocialIcon = (name) => {
+    const iconMap = {
+      "Facebook": "mdi:facebook",
+      "Instagram": "mdi:instagram",
+      "Twitter": "mdi:twitter",
+      "LinkedIn": "mdi:linkedin"
+    };
+    
+    return iconMap[name] || "mdi:link";
+  };
 
   return (
     <footer className='border-t-2 p-2 bg-gray-50'>
@@ -21,14 +34,12 @@ const Footer = () => {
             alt='Frannem Logo'
           />
         </div>
-
         <div className='flex flex-col gap-8 mt-4 md:mt-0'>
           <div className='flex justify-end'>
             <span className='text-xl font-light text-gray-400'>
               Get To Know More About Us
             </span>
           </div>
-
           <div className='w-full md:w-[400px] border h-[60px] rounded-xl flex items-center justify-center overflow-hidden'>
             <input
               type='email'
@@ -42,7 +53,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
       <div className='flex flex-wrap justify-between mt-8 p-8 gap-8'>
         {/* Company Info Section */}
         <div className='flex flex-col gap-6'>
@@ -62,7 +72,6 @@ const Footer = () => {
               {details.address}
             </p>
           </div>
-
           <div className='flex gap-4 items-center'>
             <Icon
               icon={"mdi-light:phone"}
@@ -78,41 +87,20 @@ const Footer = () => {
             <p className='text-gray-600'>{details.email}</p>
           </div>
           <div className='flex gap-4 mt-2'>
-            <a
-              href='https://facebook.com'
-              target='_blank'
-              aria-label='Facebook'
-              className='text-primary-blue hover:text-blue-700'
-            >
-              <Icon icon='mdi:facebook' className='text-2xl' />
-            </a>
-            <a
-              href='https://twitter.com'
-              target='_blank'
-              aria-label='Twitter'
-              className='text-primary-blue hover:text-blue-700'
-            >
-              <Icon icon='mdi:twitter' className='text-2xl' />
-            </a>
-            <a
-              href='https://instagram.com'
-              target='_blank'
-              aria-label='Instagram'
-              className='text-primary-blue hover:text-blue-700'
-            >
-              <Icon icon='mdi:instagram' className='text-2xl' />
-            </a>
-            <a
-              href='https://linkedin.com'
-              target='_blank'
-              aria-label='LinkedIn'
-              className='text-primary-blue hover:text-blue-700'
-            >
-              <Icon icon='mdi:linkedin' className='text-2xl' />
-            </a>
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.link}
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label={social.name}
+                className='text-primary-blue hover:text-blue-700'
+              >
+                <Icon icon={getSocialIcon(social.name)} className='text-2xl' />
+              </a>
+            ))}
           </div>
         </div>
-
         {/* Categories Section */}
         <div className='flex flex-col gap-4'>
           <span className='font-bold text-lg border-b-2 border-primary-blue pb-2'>
@@ -129,7 +117,6 @@ const Footer = () => {
             </div>
           ))}
         </div>
-
         {/* Information Section */}
         <div className='flex flex-col gap-4'>
           <span className='font-bold text-lg border-b-2 border-primary-blue pb-2'>
@@ -146,7 +133,6 @@ const Footer = () => {
             </div>
           ))}
         </div>
-
         {/* Customer Service Section */}
         <div className='flex flex-col gap-4'>
           <span className='font-bold text-lg border-b-2 border-primary-blue pb-2'>
@@ -164,7 +150,6 @@ const Footer = () => {
           ))}
         </div>
       </div>
-
       {/* Copyright Section */}
       <div className='mt-8 pt-6 border-t text-center text-gray-500'>
         <p>© {currentYear} Frannem Industries. All rights reserved.</p>
