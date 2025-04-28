@@ -21,7 +21,6 @@ const Category = () => {
     const fetchCategoryProducts = async () => {
       setIsLoading(true);
       try {
-        // Fetch products for each category
         const [
           facialProducts,
           bathProducts,

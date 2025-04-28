@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { heroImg, hero2, hero3 } from "../../assets";
+import { wav1, wav2, wav3 } from "../../assets";
 
 const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = [heroImg, hero2, hero3];
+  const images = [wav1, wav2, wav3];
 
   // Auto-rotate carousel
   useEffect(() => {

@@ -25,13 +25,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className='border-t-2 p-2 bg-gray-50'>
+    <footer className='border-t-2 p-2 bg-gray-50 mt-80'>
       <div className='hidden md:flex flex-col md:flex-row items-center justify-between mt-2 px-8'>
         <div className='w-[120px] h-[50px]'>
           <img
             className='w-full h-full object-cover'
             src={logo}
-            alt='Frannem Logo'
+            alt='Franemm Logo'
           />
         </div>
         <div className='flex flex-col gap-8 mt-4 md:mt-0'>

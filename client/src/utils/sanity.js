@@ -35,7 +35,7 @@ export async function getProductsByCategory(categorySlug) {
     price,
     availability,
     featured,
-    "imageUrl": image.asset->url,
+    "imageUrl": mainImage.asset->url,
     category->{
       name,
       slug
@@ -54,7 +54,7 @@ export async function getFeaturedProducts() {
     price,
     availability,
     featured,
-    "imageUrl": image.asset->url,
+    "imageUrl": mainImage.asset->url,
     category->{
       name,
       slug

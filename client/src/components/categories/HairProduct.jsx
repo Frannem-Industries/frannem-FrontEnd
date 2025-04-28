@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 
 const HairProduct = ({products = []}) => {
-  const displayProducts = products.slice(0, 4);
+  const displayProducts = products.slice(0, 6);
 
   return (
     <div className="w-full max-w-7xl">

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import { sanityClient } from "../../utils/sanity";
 import Lazy from "../ui/Lazy";
-import SEO from "../SEO/SEO"; // Import the new SEO component
+import SEO from "../SEO/SEO"; 
 
 const Product = () => {
   const { id } = useParams();
